@@ -1,0 +1,92 @@
+services:
+    api:
+        build:
+            context: "./api/vendor/laravel/sail/runtimes/8.4"
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: "${WWWGROUP}"
+        image: "sail-8.4/app"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        ports:
+            - "${API_PORT:-8080}:80"
+        environment:
+            WWWUSER: "${WWWUSER}"
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: "${SAIL_XDEBUG_MODE:-off}"
+            XDEBUG_CONFIG: "${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}"
+            IGNITION_LOCAL_SITES_PATH: "${PWD}/api"
+            # Laravel environment variables
+            APP_NAME: "${APP_NAME}"
+            APP_ENV: "${APP_ENV}"
+            APP_KEY: "${APP_KEY}"
+            APP_DEBUG: "${APP_DEBUG}"
+            APP_URL: "${APP_URL}"
+            DB_CONNECTION: "${DB_CONNECTION}"
+            DB_HOST: "${DB_HOST}"
+            DB_PORT: "${DB_PORT}"
+            DB_DATABASE: "${DB_DATABASE}"
+            DB_USERNAME: "${DB_USERNAME}"
+            DB_PASSWORD: "${DB_PASSWORD}"
+            SESSION_DRIVER: "${SESSION_DRIVER}"
+            CACHE_STORE: "${CACHE_STORE}"
+            QUEUE_CONNECTION: "${QUEUE_CONNECTION}"
+            MAIL_MAILER: "${MAIL_MAILER}"
+            OCTANE_SERVER: "${OCTANE_SERVER}"
+        volumes:
+            - "sail-mysql:/var/lib/mysql"
+            - "./api/vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh"
+            - "./api:/var/www/html"
+        networks:
+            - sail
+        depends_on:
+            - mysql
+
+    app:
+        build:
+            context: "./app"
+            dockerfile: Dockerfile
+        ports:
+            - "${APP_PORT:-3000}:3000"
+        environment:
+            - NUXT_HOST=0.0.0.0
+            - NUXT_PORT=3000
+            - API_BASE_URL=http://api:80
+            - NUXT_API_BASE_URL=${NUXT_API_BASE_URL}
+            - NUXT_PUBLIC_API_BASE_URL=${NUXT_PUBLIC_API_BASE_URL}
+            - NUXT_PUBLIC_SANCTUM_BASE_URL=${NUXT_PUBLIC_SANCTUM_BASE_URL}
+        volumes:
+            - "./app:/usr/src/app"
+            - "/usr/src/app/node_modules"
+        networks:
+            - sail
+        depends_on:
+            - api
+    mysql:
+        image: "mysql:8.0"
+        ports:
+            - "${FORWARD_DB_PORT:-3306}:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_DATABASE: "${DB_DATABASE}"
+            MYSQL_USER: "${DB_USERNAME}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - "sail-mysql:/var/lib/mysql"
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - "-p${DB_PASSWORD}"
+            retries: 3
+            timeout: 5s
+networks:
+    sail:
+        driver: bridge
+volumes:
+    sail-mysql:
+        driver: local

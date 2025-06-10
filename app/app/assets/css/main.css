@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "@nuxt/ui";
+
+@theme static {
+	--font-sans: "Geist", sans-serif;
+
+	--ui-radius: 5px;
+
+	--ui-sidebar-height: 4rem;
+}
+
+@layer base {
+	input,
+	button,
+	select,
+	a[href],
+	textarea {
+		--spacing: 0.35rem;
+		&[role="checkbox"],
+		&[role="switch"],
+		&[role="radio"],
+		&[role="tab"] {
+			--spacing: 0.275rem;
+		}
+		&.ps-9 {
+			padding-inline-start: calc(0.25rem * 9) !important;
+		}
+	}
+	[role="dialog"] {
+		button {
+			--spacing: 0.25rem;
+		}
+	}
+}
+
+.iconify {
+	--spacing: 0.25rem;
+}
+
+.bg-dot {
+	@apply bg-transparent h-full w-full bg-[radial-gradient(rgba(120,120,120,0.3)_1px,transparent_0)] bg-[size:30px_30px] bg-[position:-5px_-5px];
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: all 0.1s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}

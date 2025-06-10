@@ -1,0 +1,23 @@
+{
+	"name": "invoice-app",
+	"version": "1.0.0",
+	"description": "Invoice management application with Laravel API and Nuxt.js frontend",
+	"scripts": {
+		"dev": "./dev.sh backend && echo 'Backend started! Run npm run dev:frontend in another terminal'",
+		"dev:backend": "./dev.sh backend",
+		"dev:frontend": "cd app && npm run dev",
+		"dev:full": "./dev.sh full",
+		"stop": "./dev.sh stop",
+		"logs": "./dev.sh logs",
+		"laravel": "./dev.sh laravel",
+		"setup": "cd app && npm install && cd .. && ./dev.sh laravel migrate:fresh --seed"
+	},
+	"keywords": [
+		"invoice",
+		"laravel",
+		"nuxt",
+		"docker"
+	],
+	"author": "Your Name",
+	"license": "MIT"
+}
