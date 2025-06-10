@@ -1,151 +1,237 @@
-# Invoice Monorepo
+# 🧾 Invoice Management Application
 
-This is a monorepo containing a Laravel API backend and a Nuxt.js frontend application.
+A modern, full-stack invoice management application built with Laravel API backend and Nuxt.js frontend, containerized with Docker for seamless development.
 
-## Project Structure
+## 🚀 Tech Stack
+
+-   **🔧 Laravel 11** - API backend with PHP 8.4
+-   **🎨 Nuxt.js 4** - Modern Vue.js frontend
+-   **🐳 Docker** - Containerized development environment
+-   **📊 MySQL 8.0** - Database
+-   **⚡ Automated Scripts** - Helper tools for development
+
+## 📂 Project Structure
 
 ```
-├── docker-compose.yml          # Docker composition for all services
-├── .env                        # Environment variables for all services
-├── .env.example               # Example environment file
-├── api/                       # Laravel backend API
-│   ├── artisan
-│   ├── composer.json
-│   └── ...
-└── app/                       # Nuxt.js frontend
-    ├── nuxt.config.ts
-    ├── package.json
-    └── ...
+invoice/
+├── 🔧 Development Scripts
+│   ├── dev.sh                 # Main development helper
+│   ├── setup.sh              # Complete project setup
+│   └── env-setup.sh          # Environment setup
+├── 🐳 Docker Configuration
+│   ├── docker-compose.yml    # Full stack
+│   └── docker-compose.dev.yml # Backend only
+├── 🔧 api/ (Laravel)
+│   ├── app/                  # Application logic
+│   ├── database/             # Migrations, seeders
+│   └── routes/               # API routes
+└── 🎨 app/ (Nuxt.js)
+    ├── app/                  # Vue components, pages
+    ├── nuxt.config.ts        # Nuxt configuration
+    └── package.json          # Frontend dependencies
 ```
 
-## Services
+## ⚡ Quick Start
 
--   **API**: Laravel backend running on port 8080
--   **App**: Nuxt.js frontend running on port 3000
--   **MySQL**: Database server running on port 3306
-
-## Getting Started
-
-### Prerequisites
-
--   Docker and Docker Compose
--   Git
-
-### Installation
-
-1. Clone the repository:
-
-    ```bash
-    git clone <repository-url>
-    cd invoice
-    ```
-
-2. Copy the environment file:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-3. Generate Laravel application key:
-
-    ```bash
-    docker-compose run --rm api php artisan key:generate
-    ```
-
-4. Install dependencies and start the services:
-
-    ```bash
-    docker-compose up -d
-    ```
-
-5. Run database migrations:
-    ```bash
-    docker-compose exec api php artisan migrate
-    ```
-
-### Accessing the Applications
-
--   **Frontend (Nuxt.js)**: http://localhost:3000
--   **Backend API (Laravel)**: http://localhost:8080
--   **Database**: localhost:3306
-
-### Development Commands
-
-#### Laravel API Commands
+### 🆕 First Time Setup
 
 ```bash
-# Access Laravel container
-docker-compose exec api bash
+# Clone repository
+git clone <repository-url>
+cd invoice
 
-# Run Artisan commands
-docker-compose exec api php artisan migrate
-docker-compose exec api php artisan make:controller ExampleController
-docker-compose exec api php artisan tinker
+# Complete automated setup
+./setup.sh
 
-# Install Composer packages
-docker-compose exec api composer install
-docker-compose exec api composer require package-name
+# OR manual setup
+./env-setup.sh              # Setup environment
+./dev.sh backend            # Start backend services
+./dev.sh frontend           # Start frontend (new terminal)
 ```
 
-#### Nuxt.js App Commands
+### 📅 Daily Development (Recommended)
+
+**Hybrid Mode: Local Frontend + Docker Backend**
 
 ```bash
-# Access Nuxt container
-docker-compose exec app sh
+# Terminal 1: Start backend services (API + MySQL)
+./dev.sh backend
 
-# Install NPM packages
-docker-compose exec app npm install package-name
-
-# Run development mode
-docker-compose exec app npm run dev
+# Terminal 2: Start frontend with hot reload
+./dev.sh frontend
 ```
 
-### Environment Variables
+**Why this setup?**
 
-The `.env` file in the root directory contains configuration for both services:
+-   ✅ Hot module replacement for frontend
+-   ✅ Faster frontend rebuilds
+-   ✅ Better debugging experience
+-   ✅ Native IDE integration
 
--   **Shared variables**: Ports, Docker configuration
--   **Laravel API**: Database, cache, mail, etc.
--   **Nuxt.js**: API endpoints and frontend configuration
-
-### Stopping the Services
+### 🐳 Alternative: Full Docker Mode
 
 ```bash
-docker-compose down
+# Start everything in Docker
+./dev.sh full
 ```
 
-### Troubleshooting
+## 🌐 Service URLs
 
-1. **Permission Issues**: Make sure WWWGROUP and WWWUSER in .env match your system:
+| Service  | URL                   | Description |
+| -------- | --------------------- | ----------- |
+| Frontend | http://localhost:3000 | Nuxt.js app |
+| API      | http://localhost:8080 | Laravel API |
+| Database | localhost:3306        | MySQL       |
 
-    ```bash
-    id -g  # Get your group ID
-    id -u  # Get your user ID
-    ```
+## 🛠️ Development Commands
 
-2. **Port Conflicts**: Change the ports in .env if they're already in use:
+### Main Helper Script (`./dev.sh`)
 
-    ```
-    API_PORT=8080
-    APP_PORT=3000
-    FORWARD_DB_PORT=3306
-    ```
+| Command             | Description                 |
+| ------------------- | --------------------------- |
+| `./dev.sh backend`  | Start API + MySQL only      |
+| `./dev.sh frontend` | Start Nuxt locally with HMR |
+| `./dev.sh full`     | Start everything in Docker  |
+| `./dev.sh stop`     | Stop backend services       |
+| `./dev.sh logs`     | Show all logs               |
+| `./dev.sh status`   | Show service status         |
 
-3. **Database Connection**: Ensure DB_HOST is set to "mysql" (the service name) in .env
+### Laravel Commands
 
-## Contributing
+```bash
+./dev.sh laravel migrate                    # Run migrations
+./dev.sh laravel migrate:fresh --seed       # Fresh database with seeds
+./dev.sh laravel tinker                     # Laravel REPL
+./dev.sh laravel make:controller UserController
+./dev.sh laravel make:model Invoice -m      # Create model with migration
+```
 
-1. Make your changes in the appropriate directory (`api/` or `app/`)
-2. Test your changes locally using Docker Compose
-3. Submit a pull request
+### NPM Scripts (Alternative)
 
-## 📚 Documentation
+```bash
+npm run dev           # Start backend only
+npm run dev:frontend  # Start frontend only
+npm run dev:full      # Full Docker stack
+npm run setup         # Complete setup with migrations
+npm run stop          # Stop services
+```
 
--   **[DEVELOPMENT.md](DEVELOPMENT.md)** - Development workflow and commands
--   **[ENV_SETUP.md](ENV_SETUP.md)** - Environment configuration details
--   **[ENV_GUIDE.md](ENV_GUIDE.md)** - Environment variables reference
--   **[GITIGNORE.md](GITIGNORE.md)** - Git ignore patterns and best practices
+## 🔧 Development Workflow
 
-## License
+### Typical Development Day
 
-[Your License Here]
+```bash
+# 1. Start your day
+./dev.sh backend
+
+# 2. Start frontend (in another terminal)
+./dev.sh frontend
+
+# 3. Develop your features...
+
+# 4. End of day
+./dev.sh stop
+```
+
+### Database Operations
+
+```bash
+# Reset database
+./dev.sh laravel migrate:fresh --seed
+
+# Create migration
+./dev.sh laravel make:migration create_invoices_table
+
+# Create model
+./dev.sh laravel make:model Invoice -m
+
+# Check migration status
+./dev.sh laravel migrate:status
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**Port conflicts:**
+
+```bash
+# Check what's using ports
+lsof -i :8080
+lsof -i :3000
+
+# Kill process if needed
+kill -9 <PID>
+```
+
+**MySQL connection issues:**
+
+```bash
+# Check if local MySQL is running
+brew services list | grep mysql
+
+# Stop local MySQL if running
+brew services stop mysql
+```
+
+**Frontend won't start:**
+
+```bash
+# Clear Nuxt cache
+cd app && rm -rf .nuxt .output
+
+# Reinstall dependencies
+cd app && rm -rf node_modules && npm install
+```
+
+**Docker issues:**
+
+```bash
+# Clean up Docker
+docker system prune -f
+
+# Rebuild containers
+./dev.sh stop
+docker-compose -f docker-compose.dev.yml build --no-cache
+./dev.sh backend
+```
+
+## 🎯 Architecture Benefits
+
+### Development Modes
+
+#### 🚀 Recommended: Hybrid Development
+
+-   **Backend**: Docker containers (API + MySQL)
+-   **Frontend**: Local development (`npm run dev`)
+-   **Benefits**: Hot reload, fast builds, easy debugging
+
+#### 🐳 Full Docker Development
+
+-   **All services**: Running in Docker containers
+-   **Benefits**: Production-like environment, consistency
+
+### Key Features
+
+-   ✅ **Single source of truth** - Centralized environment config
+-   ✅ **Automated setup** - One-command project initialization
+-   ✅ **Hot reload support** - Fast frontend development
+-   ✅ **Volume persistence** - Database data preservation
+-   ✅ **Helper scripts** - Simplified common tasks
+
+## 🤝 Contributing
+
+1. Use the development helper script: `./dev.sh`
+2. Follow the recommended hybrid development workflow
+3. Test both frontend modes before submitting
+4. Ensure all migrations work correctly
+
+## 📚 Resources
+
+-   [Laravel Documentation](https://laravel.com/docs)
+-   [Nuxt.js Documentation](https://nuxt.com)
+-   [Docker Compose Documentation](https://docs.docker.com/compose/)
+
+---
+
+**🎉 Happy coding!**
